@@ -16,7 +16,7 @@ func (s *Server) router(ctx context.Context) fasthttp.RequestHandler {
 	mux.GET("/check", check)
 	mux.GET("/metrics", fasthttpadaptor.NewFastHTTPHandler(promhttp.Handler()))
 
-	mux.GET("/block/{id}", s.blockId)
+	mux.GET("/service/price", s.handlerPrice)
 
 	return mux.Handler
 }

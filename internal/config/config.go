@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/jessevdk/go-flags"
 )
@@ -16,7 +17,9 @@ type AppConfig struct {
 
 	Mysql Mysql `group:"Mysql configuration" namespace:"mysql"`
 
-	ExternalServices ExternalServices `group:"External services configuration" namespace:"external_services"`
+	Scheduler Scheduler `group:"Scheduler configuration" namespace:"scheduler"`
+
+	CryptoCompare CryptoCompare `group:"External services cryptocompare" namespace:"crypto_compare"`
 }
 
 type Mysql struct {
@@ -27,8 +30,15 @@ type HTTPServer struct {
 	Port int `long:"port" description:"Port HTTP server" default:"8090"`
 }
 
-type ExternalServices struct {
-	UrlCryptoCompare string `long:"url_crypto_compare" description:"Address of cryptocompare.com api" default:"https://min-api.cryptocompare.com/data/pricemultifull"`
+type CryptoCompare struct {
+	FromSymbols []string `long:"from_symbols" description:"From symbols" default:"BTC" default:"XRP" default:"ETH" default:"BCH" default:"EOS" default:"LTC" default:"XMR" default:"DASH"`
+	ToSymbols   []string `long:"to_symbols" description:"To symbols" default:"USD" default:"EUR" default:"GBP" default:"JPY" default:"RUR"`
+
+	Url string `long:"url" description:"Address of cryptocompare.com api" default:"https://min-api.cryptocompare.com/data/pricemultifull"`
+}
+
+type Scheduler struct {
+	TickInterval time.Duration `long:"tick_interval" description:"Tick interval scheduler" default:"2m"`
 }
 
 func NewAppConfig() (*AppConfig, error) {

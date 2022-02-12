@@ -29,11 +29,11 @@ func New(conf *config.Mysql) (*Storage, error) {
 	}, nil
 }
 
-func (s *Storage) StoreCurrency(currency *entities.Currency) error {
+func (s *Storage) StoreCurrency(currency ...*entities.Currency) error {
 	return nil
 }
 
-func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol string) (*entities.Currency, error) {
+func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol []string) ([]*entities.Currency, error) {
 	return nil, nil
 }
 

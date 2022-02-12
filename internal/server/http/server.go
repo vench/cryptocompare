@@ -3,8 +3,9 @@ package http
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
+
+	"github.com/vench/cryptocompare/internal/storage"
 
 	"github.com/valyala/fasthttp"
 	"github.com/vench/cryptocompare/internal/config"
@@ -13,15 +14,17 @@ import (
 
 // Server contains and produce maintance web service.
 type Server struct {
-	logger *zap.Logger
-	conf   *config.AppConfig
+	logger  *zap.Logger
+	conf    *config.AppConfig
+	storage storage.CurrencyReader
 }
 
 // NewServer create instance of Server.
-func NewServer(logger *zap.Logger, conf *config.AppConfig) (*Server, error) {
+func NewServer(logger *zap.Logger, conf *config.AppConfig, storage storage.CurrencyReader) (*Server, error) {
 	return &Server{
-		logger: logger,
-		conf:   conf,
+		logger:  logger,
+		conf:    conf,
+		storage: storage,
 	}, nil
 }
 
@@ -56,17 +59,4 @@ func (s *Server) Serve(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func userValueUint64(rCtx *fasthttp.RequestCtx, key string) (uint64, bool) {
-	value := rCtx.UserValue(key)
-	sid, ok := value.(string)
-	if !ok {
-		return 0, false
-	}
-	id, err := strconv.ParseUint(sid, 10, 64)
-	if err != nil {
-		return 0, false
-	}
-	return id, true
 }
