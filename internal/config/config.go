@@ -15,7 +15,7 @@ type AppConfig struct {
 
 	HTTP HTTPServer `group:"HTTP server configuration" namespace:"http"`
 
-	Mysql Mysql `group:"Mysql configuration" namespace:"mysql"`
+	Mysql Mysql `group:"Mysql configuration" env-namespace:"MYSQL" namespace:"mysql"`
 
 	Scheduler Scheduler `group:"Scheduler configuration" namespace:"scheduler"`
 
@@ -23,7 +23,7 @@ type AppConfig struct {
 }
 
 type Mysql struct {
-	ConnectionString string `long:"connection_string" description:"String connection MYSQL" default:"root:admin@tcp(127.0.0.1:3306)/test"`
+	ConnectionString string `long:"connection_string" env:"CONNECTION_STRING" description:"String connection MYSQL" default:"root:admin@tcp(127.0.0.1:3306)/test"`
 }
 
 type HTTPServer struct {
