@@ -13,7 +13,7 @@ var ErrHelp = errors.New("help")
 type AppConfig struct {
 	Name string `long:"name" description:"Application name" default:"App name"`
 
-	HTTP HTTPServer `group:"HTTP server configuration" namespace:"http"`
+	HTTP HTTPServer `group:"HTTP server configuration" env-namespace:"HTTP" namespace:"http"`
 
 	Mysql Mysql `group:"Mysql configuration" env-namespace:"MYSQL" namespace:"mysql"`
 
@@ -27,7 +27,7 @@ type Mysql struct {
 }
 
 type HTTPServer struct {
-	Port int `long:"port" description:"Port HTTP server" default:"8090"`
+	Port int `long:"port" env:"PORT" description:"Port HTTP server" default:"8090"`
 }
 
 type CryptoCompare struct {

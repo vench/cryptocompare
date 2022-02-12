@@ -111,8 +111,9 @@ func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol []string) ([]*entities.Curr
 				LOW24HOUR:       val.LOW24HOUR.Float(),
 				CHANGE24HOUR:    val.CHANGE24HOUR.Float(),
 				CHANGEPCT24HOUR: val.CHANGEPCT24HOUR.Float(),
-				SUPPLY:          val.SUPPLY.Int(),
 				MKTCAP:          val.MKTCAP.Float(),
+
+				SUPPLY: val.SUPPLY.Int(),
 			})
 		}
 	}

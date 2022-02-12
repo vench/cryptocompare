@@ -6,8 +6,8 @@ services:
     image: mysql:8.0.20
     command: --default-authentication-plugin=mysql_native_password
     volumes:
-      - ./mysql/data/:/var/lib/mysql
-    #  - ./mysql/init:/docker-entrypoint-initdb.d/:ro
+      - ./mysql/data/:/var/lib/mysql:rw
+      - ./mysql/init/init.sql:/docker-entrypoint-initdb.d/1-init.sql:ro
     cap_add:
       - sys_nice #SYS_NICE
     environment:
@@ -29,10 +29,10 @@ services:
     networks:
       - cryptocompare
     environment:
+      HTTP_PORT: 8081
       MYSQL_CONNECTION_STRING: 'user_cryptocompare:password_cryptocompare@tcp(mysql:3306)/cryptocompare'
     depends_on:
       - mysql
 
 networks:
   cryptocompare:
-    driver: bridge
