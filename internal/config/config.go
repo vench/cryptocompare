@@ -38,7 +38,7 @@ type CryptoCompare struct {
 }
 
 type Scheduler struct {
-	TickInterval time.Duration `long:"tick_interval" description:"Tick interval scheduler" default:"2m"`
+	TickInterval time.Duration `long:"tick_interval" description:"Tick interval scheduler" default:"5m"`
 }
 
 func NewAppConfig() (*AppConfig, error) {

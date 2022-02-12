@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	jsoniter "github.com/json-iterator/go"
@@ -24,17 +25,40 @@ func New(logger *zap.Logger, conf *config.CryptoCompare) (*Storage, error) {
 	}, nil
 }
 
+type numberResponse float64
+
+func (f numberResponse) Float() float64 {
+	return float64(f)
+}
+
+func (f numberResponse) Int() int64 {
+	return int64(f)
+}
+
+func (f *numberResponse) Unmarshal(b []byte) error {
+	v, err := strconv.ParseFloat(string(b), 64)
+	if err != nil {
+		vi, err := strconv.ParseInt(string(b), 10, 64)
+		if err != nil {
+			return err
+		}
+		v = float64(vi)
+	}
+	*f = numberResponse(v)
+	return nil
+}
+
 type currencyResponse struct {
-	PRICE           float64 `json:"PRICE"`
-	VOLUME24HOUR    float64 `json:"VOLUME24HOUR"`
-	VOLUME24HOURTO  float64 `json:"VOLUME24HOURTO"`
-	OPEN24HOUR      float64 `json:"OPEN24HOUR"`
-	HIGH24HOUR      float64 `json:"HIGH24HOUR"`
-	LOW24HOUR       float64 `json:"LOW24HOUR"`
-	CHANGE24HOUR    float64 `json:"CHANGE24HOUR"`
-	CHANGEPCT24HOUR float64 `json:"CHANGEPCT24HOUR"`
-	SUPPLY          int     `json:"SUPPLY"`
-	MKTCAP          float64 `json:"MKTCAP"`
+	PRICE           numberResponse `json:"PRICE"`
+	VOLUME24HOUR    numberResponse `json:"VOLUME24HOUR"`
+	VOLUME24HOURTO  numberResponse `json:"VOLUME24HOURTO"`
+	OPEN24HOUR      numberResponse `json:"OPEN24HOUR"`
+	HIGH24HOUR      numberResponse `json:"HIGH24HOUR"`
+	LOW24HOUR       numberResponse `json:"LOW24HOUR"`
+	CHANGE24HOUR    numberResponse `json:"CHANGE24HOUR"`
+	CHANGEPCT24HOUR numberResponse `json:"CHANGEPCT24HOUR"`
+	SUPPLY          numberResponse `json:"SUPPLY"`
+	MKTCAP          numberResponse `json:"MKTCAP"`
 }
 
 type response struct {
@@ -79,16 +103,16 @@ func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol []string) ([]*entities.Curr
 				FromSymbol: from,
 				ToSymbol:   to,
 
-				PRICE:           val.PRICE,
-				VOLUME24HOUR:    val.VOLUME24HOUR,
-				VOLUME24HOURTO:  val.VOLUME24HOURTO,
-				OPEN24HOUR:      val.OPEN24HOUR,
-				HIGH24HOUR:      val.HIGH24HOUR,
-				LOW24HOUR:       val.LOW24HOUR,
-				CHANGE24HOUR:    val.CHANGE24HOUR,
-				CHANGEPCT24HOUR: val.CHANGEPCT24HOUR,
-				SUPPLY:          val.SUPPLY,
-				MKTCAP:          val.MKTCAP,
+				PRICE:           val.PRICE.Float(),
+				VOLUME24HOUR:    val.VOLUME24HOUR.Float(),
+				VOLUME24HOURTO:  val.VOLUME24HOURTO.Float(),
+				OPEN24HOUR:      val.OPEN24HOUR.Float(),
+				HIGH24HOUR:      val.HIGH24HOUR.Float(),
+				LOW24HOUR:       val.LOW24HOUR.Float(),
+				CHANGE24HOUR:    val.CHANGE24HOUR.Float(),
+				CHANGEPCT24HOUR: val.CHANGEPCT24HOUR.Float(),
+				SUPPLY:          val.SUPPLY.Int(),
+				MKTCAP:          val.MKTCAP.Float(),
 			})
 		}
 	}

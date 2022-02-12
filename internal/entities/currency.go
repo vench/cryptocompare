@@ -12,6 +12,6 @@ type Currency struct {
 	LOW24HOUR       float64
 	HIGH24HOUR      float64
 	PRICE           float64
-	SUPPLY          int
+	SUPPLY          int64
 	MKTCAP          float64
 }
