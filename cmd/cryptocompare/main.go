@@ -30,36 +30,40 @@ func main() {
 		if errors.Is(err, config.ErrHelp) {
 			os.Exit(0)
 		}
-		log.Fatalf("failed to read app config: %w", err)
+		log.Fatalf("failed to read app config: %v", err)
 	}
 
 	ll, err := logger.New()
 	if err != nil {
-		log.Fatalf("failed to create logger: %w", err)
+		log.Fatalf("failed to create logger: %v", err)
 	}
 	defer ll.Sync()
 
 	storageInner, err := mysql.New(&appConfig.Mysql)
 	if err != nil {
-		log.Fatalf("failed to create mysql storage: %w", err)
+		ll.Error("failed to create mysql storage", zap.Error(err))
+		return
 	}
 	defer storageInner.Close()
 
 	storageOuter, err := api.New(ll, &appConfig.CryptoCompare)
 	if err != nil {
-		log.Fatalf("failed to create api storage: %w", err)
+		ll.Error("failed to create api storage", zap.Error(err))
+		return
 	}
 
 	storageChain := storage.NewCurrencyReaderChain(storageOuter, storageInner)
 
 	serverHttp, err := http.NewServer(ll, appConfig, storageChain)
 	if err != nil {
-		log.Fatalf("failed to create http server: %w", err)
+		ll.Error("failed to create http server", zap.Error(err))
+		return
 	}
 
 	serviceScheduler, err := scheduler.NewScheduler(ll, appConfig, storageOuter, storageInner)
 	if err != nil {
-		log.Fatalf("failed to create service scheduler: %w", err)
+		ll.Error("failed to create service scheduler", zap.Error(err))
+		return
 	}
 	defer serviceScheduler.Close()
 
