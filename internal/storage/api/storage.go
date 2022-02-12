@@ -25,20 +25,20 @@ func New(logger *zap.Logger, conf *config.CryptoCompare) (*Storage, error) {
 }
 
 type currencyResponse struct {
-	PRICE           string `json:"PRICE"`
-	VOLUME24HOUR    string `json:"VOLUME24HOUR"`
-	VOLUME24HOURTO  string `json:"VOLUME24HOURTO"`
-	OPEN24HOUR      string `json:"OPEN24HOUR"`
-	HIGH24HOUR      string `json:"HIGH24HOUR"`
-	LOW24HOUR       string `json:"LOW24HOUR"`
-	CHANGE24HOUR    string `json:"CHANGE24HOUR"`
-	CHANGEPCT24HOUR string `json:"CHANGEPCT24HOUR"`
-	SUPPLY          string `json:"SUPPLY"`
-	MKTCAP          string `json:"MKTCAP"`
+	PRICE           float64 `json:"PRICE"`
+	VOLUME24HOUR    float64 `json:"VOLUME24HOUR"`
+	VOLUME24HOURTO  float64 `json:"VOLUME24HOURTO"`
+	OPEN24HOUR      float64 `json:"OPEN24HOUR"`
+	HIGH24HOUR      float64 `json:"HIGH24HOUR"`
+	LOW24HOUR       float64 `json:"LOW24HOUR"`
+	CHANGE24HOUR    float64 `json:"CHANGE24HOUR"`
+	CHANGEPCT24HOUR float64 `json:"CHANGEPCT24HOUR"`
+	SUPPLY          int     `json:"SUPPLY"`
+	MKTCAP          float64 `json:"MKTCAP"`
 }
 
 type response struct {
-	Display map[string]map[string]currencyResponse `json:"DISPLAY"`
+	Raw map[string]map[string]currencyResponse `json:"RAW"`
 }
 
 func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol []string) ([]*entities.Currency, error) {
@@ -64,7 +64,7 @@ func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol []string) ([]*entities.Curr
 	if err != nil {
 		return nil, fmt.Errorf("failed to read body: %w", err)
 	}
-	// unmarshal
+
 	var data response
 	if err := jsoniter.Unmarshal(body, &data); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal body: %w", err)
@@ -73,7 +73,7 @@ func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol []string) ([]*entities.Curr
 	s.logger.Debug("data", zap.Reflect("data", data))
 
 	result := make([]*entities.Currency, 0)
-	for from, item := range data.Display {
+	for from, item := range data.Raw {
 		for to, val := range item {
 			result = append(result, &entities.Currency{
 				FromSymbol: from,
@@ -90,7 +90,6 @@ func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol []string) ([]*entities.Curr
 				SUPPLY:          val.SUPPLY,
 				MKTCAP:          val.MKTCAP,
 			})
-
 		}
 	}
 

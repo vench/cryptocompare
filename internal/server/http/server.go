@@ -12,6 +12,11 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	strContentType     = []byte("Content-Type")
+	strApplicationJSON = []byte("application/json")
+)
+
 // Server contains and produce maintance web service.
 type Server struct {
 	logger  *zap.Logger

@@ -4,14 +4,14 @@ type Currency struct {
 	FromSymbol string
 	ToSymbol   string
 
-	CHANGE24HOUR    string
-	CHANGEPCT24HOUR string
-	OPEN24HOUR      string
-	VOLUME24HOUR    string
-	VOLUME24HOURTO  string
-	LOW24HOUR       string
-	HIGH24HOUR      string
-	PRICE           string
-	SUPPLY          string
-	MKTCAP          string
+	CHANGE24HOUR    float64
+	CHANGEPCT24HOUR float64
+	OPEN24HOUR      float64
+	VOLUME24HOUR    float64
+	VOLUME24HOURTO  float64
+	LOW24HOUR       float64
+	HIGH24HOUR      float64
+	PRICE           float64
+	SUPPLY          int
+	MKTCAP          float64
 }
