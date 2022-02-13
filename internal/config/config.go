@@ -15,6 +15,8 @@ type AppConfig struct {
 
 	HTTP HTTPServer `group:"HTTP server configuration" env-namespace:"HTTP" namespace:"http"`
 
+	WS WSServer `group:"WS server configuration" env-namespace:"WS" namespace:"ws"`
+
 	Mysql Mysql `group:"Mysql configuration" env-namespace:"MYSQL" namespace:"mysql"`
 
 	Scheduler Scheduler `group:"Scheduler configuration" namespace:"scheduler"`
@@ -29,6 +31,10 @@ type Mysql struct {
 
 type HTTPServer struct {
 	Port int `long:"port" env:"PORT" description:"Port HTTP server" default:"8090"`
+}
+
+type WSServer struct {
+	Port int `long:"port" env:"PORT" description:"Port HTTP server" default:"8091"`
 }
 
 type CryptoCompare struct {

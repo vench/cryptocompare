@@ -5,6 +5,8 @@ go 1.17
 require (
 	github.com/chapsuk/grace v0.5.0
 	github.com/fasthttp/router v1.4.6
+	github.com/fasthttp/websocket v1.4.6
+	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/jessevdk/go-flags v1.5.0

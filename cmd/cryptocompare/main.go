@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/vench/cryptocompare/internal/server/ws"
+
 	"github.com/vench/cryptocompare/internal/storage/api"
 
 	"github.com/vench/cryptocompare/internal/storage"
@@ -60,6 +62,12 @@ func main() {
 		return
 	}
 
+	serverWS, err := ws.NewServer(ll, appConfig, storageChain)
+	if err != nil {
+		ll.Error("failed to create ws server", zap.Error(err))
+		return
+	}
+
 	serviceScheduler, err := scheduler.NewScheduler(ll, appConfig, storageOuter, storageInner)
 	if err != nil {
 		ll.Error("failed to create service scheduler", zap.Error(err))
@@ -72,6 +80,9 @@ func main() {
 	gr, appctx := errgroup.WithContext(ctx)
 	gr.Go(func() error {
 		return serverHTTP.Serve(appctx)
+	})
+	gr.Go(func() error {
+		return serverWS.Serve(appctx)
 	})
 	gr.Go(func() error {
 		return serviceScheduler.Run(appctx)
