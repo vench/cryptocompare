@@ -1,4 +1,4 @@
-package http
+package server
 
 import (
 	"testing"
@@ -57,7 +57,7 @@ func TestFormatMoney(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			out := moneyFormat(tc.input, tc.sym, tc.precision)
+			out := MoneyFormat(tc.input, tc.sym, tc.precision)
 			require.Equal(t, tc.out, out)
 		})
 	}

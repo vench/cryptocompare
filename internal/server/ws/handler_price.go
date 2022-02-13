@@ -2,6 +2,9 @@ package ws
 
 import (
 	"net/http"
+	"strings"
+
+	"github.com/vench/cryptocompare/internal/server"
 
 	jsoniter "github.com/json-iterator/go"
 
@@ -16,7 +19,6 @@ var upgrader = websocket.Upgrader{
 }
 
 func (s *Server) handlerPrice(w http.ResponseWriter, r *http.Request) {
-
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -41,6 +43,12 @@ type messageRequest struct {
 	ToSymbols   string `json:"tsyms"`
 }
 
+var (
+	messageFailedMarshalResponse  = []byte("failed to marshal response")
+	messageFailedGetCurrency      = []byte("failed to get currency")
+	messageFailedUnmarshalMessage = []byte("failed to unmarshal message")
+)
+
 func (s *Server) reader(conn *websocket.Conn) {
 	for {
 		messageType, p, err := conn.ReadMessage()
@@ -57,20 +65,38 @@ func (s *Server) reader(conn *websocket.Conn) {
 		s.logger.Debug("print out that message", zap.String("message", string(p)))
 
 		var message messageRequest
-		if err := jsoniter.Unmarshal(p, &message); err != nil {
+		if err = jsoniter.Unmarshal(p, &message); err != nil {
 			s.logger.Debug("failed to unmarshal message", zap.Error(err), zap.String("message", string(p)))
 
-			if err := conn.WriteMessage(messageType, []byte("failed read message")); err != nil {
-				s.logger.Error("failed to write message", zap.Error(err))
-				return
-			}
-
+			s.writeMessage(conn, messageType, messageFailedUnmarshalMessage)
 			continue
 		}
 
-		if err := conn.WriteMessage(messageType, p); err != nil {
-			s.logger.Error("failed to write message", zap.Error(err))
+		result, err := s.storage.GetCurrencyBy(
+			strings.Split(message.FromSymbols, ","),
+			strings.Split(message.ToSymbols, ","))
+		if err != nil {
+			s.logger.Error("failed to get currency", zap.Error(err))
+
+			s.writeMessage(conn, messageType, messageFailedGetCurrency)
 			return
 		}
+
+		response := server.MakeCurrencyResponse(result)
+		data, err := jsoniter.Marshal(response)
+		if err != nil {
+			s.logger.Error("failed to marshal response", zap.Error(err))
+
+			s.writeMessage(conn, messageType, messageFailedMarshalResponse)
+			return
+		}
+
+		s.writeMessage(conn, messageType, data)
+	}
+}
+
+func (s *Server) writeMessage(conn *websocket.Conn, messageType int, data []byte) {
+	if err := conn.WriteMessage(messageType, data); err != nil {
+		s.logger.Error("failed to write message", zap.Error(err))
 	}
 }
