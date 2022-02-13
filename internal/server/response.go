@@ -68,16 +68,16 @@ func MakeCurrencyResponse(result []*entities.Currency) interface{} {
 		}
 
 		dm[item.ToSymbol] = &currencyDisplayResponse{
-			CHANGE24HOUR:    MoneyDollarFormat(item.CHANGE24HOUR),
-			CHANGEPCT24HOUR: MoneyFormat(item.CHANGEPCT24HOUR, "", 2),
-			OPEN24HOUR:      MoneyDollarFormat(item.OPEN24HOUR),
-			VOLUME24HOUR:    MoneyBitcoinFormat(item.VOLUME24HOUR),
-			VOLUME24HOURTO:  MoneyDollarFormat(item.VOLUME24HOURTO),
-			LOW24HOUR:       MoneyDollarFormat(item.LOW24HOUR),
-			HIGH24HOUR:      MoneyDollarFormat(item.HIGH24HOUR),
-			PRICE:           MoneyDollarFormat(item.PRICE),
-			SUPPLY:          MoneyBitcoinFormat(item.SUPPLY),
-			MKTCAP:          MoneyDollarFormat(item.MKTCAP),
+			CHANGE24HOUR:    moneyDollarFormat(item.CHANGE24HOUR),
+			CHANGEPCT24HOUR: moneyFormat(item.CHANGEPCT24HOUR, "", 2),
+			OPEN24HOUR:      moneyDollarFormat(item.OPEN24HOUR),
+			VOLUME24HOUR:    moneyBitcoinFormat(item.VOLUME24HOUR),
+			VOLUME24HOURTO:  moneyDollarFormat(item.VOLUME24HOURTO),
+			LOW24HOUR:       moneyDollarFormat(item.LOW24HOUR),
+			HIGH24HOUR:      moneyDollarFormat(item.HIGH24HOUR),
+			PRICE:           moneyDollarFormat(item.PRICE),
+			SUPPLY:          moneyBitcoinFormat(item.SUPPLY),
+			MKTCAP:          moneyDollarFormat(item.MKTCAP),
 		}
 
 		response.Display[item.FromSymbol] = dm

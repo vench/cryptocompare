@@ -4,17 +4,17 @@ import (
 	"github.com/leekchan/accounting"
 )
 
-func MoneyBitcoinFormat(number float64) string {
-	return MoneyFormat(number, "Ƀ", 1)
+func moneyBitcoinFormat(number float64) string {
+	return moneyFormat(number, "Ƀ", 1)
 }
 
-func MoneyDollarFormat(number float64) string {
-	return MoneyFormat(number, "$", 2)
+func moneyDollarFormat(number float64) string {
+	return moneyFormat(number, "$", 2)
 }
 
 const magnitudeBillion float64 = 1000000000
 
-func MoneyFormat(number float64, symbol string, precision int) string {
+func moneyFormat(number float64, symbol string, precision int) string {
 	ac := accounting.DefaultAccounting(symbol, precision)
 	ac.SetFormat("%s %v")
 	ac.SetFormatNegative("%s -%v")

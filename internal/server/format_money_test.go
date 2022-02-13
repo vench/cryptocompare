@@ -57,7 +57,7 @@ func TestFormatMoney(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			out := MoneyFormat(tc.input, tc.sym, tc.precision)
+			out := moneyFormat(tc.input, tc.sym, tc.precision)
 			require.Equal(t, tc.out, out)
 		})
 	}
