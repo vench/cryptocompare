@@ -38,6 +38,13 @@ down:
 up:
 	$(V)docker-compose  -f deployments/docker-compose.yaml up -d
 
+.PHONY: lint
+lint:
+	$(V)./bin/golangci-lint run
 
+.PHONY: lint-install
+lint-install:
+	$(V)wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.44.0
+	$(v)./bin/golangci-lint --version
 
 

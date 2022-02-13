@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/fasthttp/router"
@@ -10,7 +9,7 @@ import (
 	"github.com/valyala/fasthttp/fasthttpadaptor"
 )
 
-func (s *Server) router(ctx context.Context) fasthttp.RequestHandler {
+func (s *Server) router() fasthttp.RequestHandler {
 	mux := router.New()
 
 	mux.GET("/check", check)

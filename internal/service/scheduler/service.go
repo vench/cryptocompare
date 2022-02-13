@@ -42,7 +42,7 @@ func (s *Scheduler) Run(ctx context.Context) error {
 	for {
 		select {
 		case <-t.C:
-			if err := s.parseApiCryptocompare(); err != nil {
+			if err := s.parseAPICryptocompare(); err != nil {
 				s.logger.Error("failed to parse api cryptocompare", zap.Error(err))
 			}
 		case <-ctx.Done():
@@ -51,8 +51,6 @@ func (s *Scheduler) Run(ctx context.Context) error {
 			return nil
 		}
 	}
-
-	return nil
 }
 
 func (s *Scheduler) Close() error {

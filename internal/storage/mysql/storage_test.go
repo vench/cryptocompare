@@ -63,7 +63,7 @@ func TestStorage_StoreCurrency(t *testing.T) {
 	require.NoError(t, err)
 
 	defer t.Cleanup(func() {
-		mysqlC.Terminate(ctx)
+		require.NoError(t, mysqlC.Terminate(ctx))
 	})
 
 	s, err := New(&config.Mysql{

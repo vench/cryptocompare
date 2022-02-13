@@ -2,7 +2,7 @@ package scheduler
 
 import "fmt"
 
-func (s *Scheduler) parseApiCryptocompare() error {
+func (s *Scheduler) parseAPICryptocompare() error {
 	s.logger.Debug("begin parse api cryptocompare")
 
 	result, err := s.currencyReader.GetCurrencyBy(

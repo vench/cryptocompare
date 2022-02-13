@@ -34,7 +34,7 @@ func New(conf *config.Mysql) (*Storage, error) {
 
 func (s *Storage) StoreCurrency(currencies ...*entities.Currency) error {
 	for _, currency := range currencies {
-		sql := "INSERT INTO currency(`key`,`value`,`updated_at`) VALUES (?,?,now()) " +
+		query := "INSERT INTO currency(`key`,`value`,`updated_at`) VALUES (?,?,now()) " +
 			"ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updated_at`= VALUES(`updated_at`)"
 
 		data, err := jsoniter.Marshal(currency)
@@ -42,7 +42,7 @@ func (s *Storage) StoreCurrency(currencies ...*entities.Currency) error {
 			return fmt.Errorf("failed to marshal currency: %w", err)
 		}
 
-		if _, err := s.conn.Exec(sql, key(currency), data); err != nil {
+		if _, err := s.conn.Exec(query, key(currency), data); err != nil {
 			return fmt.Errorf("failed to insert row: %w", err)
 		}
 	}

@@ -17,7 +17,7 @@ var (
 	strApplicationJSON = []byte("application/json")
 )
 
-// Server contains and produce maintance web service.
+// Server contains and produce maintenance web service.
 type Server struct {
 	logger  *zap.Logger
 	conf    *config.AppConfig
@@ -25,17 +25,17 @@ type Server struct {
 }
 
 // NewServer create instance of Server.
-func NewServer(logger *zap.Logger, conf *config.AppConfig, storage storage.CurrencyReader) (*Server, error) {
+func NewServer(logger *zap.Logger, conf *config.AppConfig, currencyReader storage.CurrencyReader) (*Server, error) {
 	return &Server{
 		logger:  logger,
 		conf:    conf,
-		storage: storage,
+		storage: currencyReader,
 	}, nil
 }
 
 func (s *Server) Serve(ctx context.Context) error {
 	srv := &fasthttp.Server{
-		Handler:            s.router(ctx),
+		Handler:            s.router(),
 		Name:               s.conf.Name + " http server",
 		ReadTimeout:        time.Second,
 		WriteTimeout:       time.Second,
@@ -62,6 +62,4 @@ func (s *Server) Serve(ctx context.Context) error {
 	case err := <-errCh:
 		return err
 	}
-
-	return nil
 }

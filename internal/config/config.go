@@ -23,6 +23,7 @@ type AppConfig struct {
 }
 
 type Mysql struct {
+	//nolint:lll
 	ConnectionString string `long:"connection_string" env:"CONNECTION_STRING" description:"String connection MYSQL" default:"root:admin@tcp(127.0.0.1:3306)/test"`
 }
 
@@ -31,10 +32,11 @@ type HTTPServer struct {
 }
 
 type CryptoCompare struct {
+	// nolint:lll
 	FromSymbols []string `long:"from_symbols" description:"From symbols" default:"BTC" default:"XRP" default:"ETH" default:"BCH" default:"EOS" default:"LTC" default:"XMR" default:"DASH"`
 	ToSymbols   []string `long:"to_symbols" description:"To symbols" default:"USD" default:"EUR" default:"GBP" default:"JPY" default:"RUR"`
 
-	Url string `long:"url" description:"Address of cryptocompare.com api" default:"https://min-api.cryptocompare.com/data/pricemultifull"`
+	URL string `long:"url" description:"Address of cryptocompare.com api" default:"https://min-api.cryptocompare.com/data/pricemultifull"`
 }
 
 type Scheduler struct {

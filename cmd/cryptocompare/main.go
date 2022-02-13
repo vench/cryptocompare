@@ -37,7 +37,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to create logger: %v", err)
 	}
-	defer ll.Sync()
+	defer ll.Sync() //nolint:errcheck
 
 	storageInner, err := mysql.New(&appConfig.Mysql)
 	if err != nil {
@@ -54,7 +54,7 @@ func main() {
 
 	storageChain := storage.NewCurrencyReaderChain(storageOuter, storageInner)
 
-	serverHttp, err := http.NewServer(ll, appConfig, storageChain)
+	serverHTTP, err := http.NewServer(ll, appConfig, storageChain)
 	if err != nil {
 		ll.Error("failed to create http server", zap.Error(err))
 		return
@@ -71,7 +71,7 @@ func main() {
 
 	gr, appctx := errgroup.WithContext(ctx)
 	gr.Go(func() error {
-		return serverHttp.Serve(appctx)
+		return serverHTTP.Serve(appctx)
 	})
 	gr.Go(func() error {
 		return serviceScheduler.Run(appctx)

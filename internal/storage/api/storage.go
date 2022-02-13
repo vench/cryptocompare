@@ -1,11 +1,13 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/vench/cryptocompare/internal/config"
@@ -67,17 +69,21 @@ type response struct {
 
 func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol []string) ([]*entities.Currency, error) {
 	url := fmt.Sprintf("%s?fsyms=%s&tsyms=%s",
-		s.conf.Url,
+		s.conf.URL,
 		strings.Join(fromSymbol, ","),
 		strings.Join(toSymbol, ","),
 	)
 
 	s.logger.Debug("url to cryptocompare", zap.String("url", url))
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new request: %w", err)
 	}
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to run query: %w", err)
@@ -112,8 +118,7 @@ func (s *Storage) GetCurrencyBy(fromSymbol, toSymbol []string) ([]*entities.Curr
 				CHANGE24HOUR:    val.CHANGE24HOUR.Float(),
 				CHANGEPCT24HOUR: val.CHANGEPCT24HOUR.Float(),
 				MKTCAP:          val.MKTCAP.Float(),
-
-				SUPPLY: val.SUPPLY.Int(),
+				SUPPLY:          val.SUPPLY.Float(),
 			})
 		}
 	}

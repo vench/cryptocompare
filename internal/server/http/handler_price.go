@@ -8,7 +8,6 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/leekchan/accounting"
 	"github.com/valyala/fasthttp"
 )
 
@@ -22,8 +21,7 @@ type currencyRawResponse struct {
 	HIGH24HOUR      float64 `json:"HIGH24HOUR"`
 	PRICE           float64 `json:"PRICE"`
 	MKTCAP          float64 `json:"MKTCAP"`
-
-	SUPPLY int64 `json:"SUPPLY"`
+	SUPPLY          float64 `json:"SUPPLY"`
 }
 
 type currencyDisplayResponse struct {
@@ -65,26 +63,6 @@ func (s *Server) handlerPrice(rCtx *fasthttp.RequestCtx) {
 		Display: make(map[string]map[string]*currencyDisplayResponse),
 	}
 
-	// TODO format exp https://stackoverflow.com/questions/28159936/format-numbers-with-million-m-and-billion-b-suffixes
-	acDollar := accounting.Accounting{
-		Symbol:         "$",
-		Precision:      2,
-		Format:         "%s %v",
-		FormatNegative: "%s -%v",
-	}
-	acB := accounting.Accounting{
-		Symbol:         "B",
-		Precision:      2,
-		Format:         "%s %v",
-		FormatNegative: "%s -%v",
-	}
-	acDefault := accounting.Accounting{
-		Symbol:         "",
-		Precision:      2,
-		Format:         "%v",
-		FormatNegative: "-%v",
-	}
-
 	for _, item := range result {
 		// raw data
 		fm, ok := response.Raw[item.FromSymbol]
@@ -114,16 +92,16 @@ func (s *Server) handlerPrice(rCtx *fasthttp.RequestCtx) {
 		}
 
 		dm[item.ToSymbol] = &currencyDisplayResponse{
-			CHANGE24HOUR:    acDollar.FormatMoneyFloat64(item.CHANGE24HOUR),
-			CHANGEPCT24HOUR: acDefault.FormatMoneyFloat64(item.CHANGEPCT24HOUR),
-			OPEN24HOUR:      acDollar.FormatMoneyFloat64(item.OPEN24HOUR),
-			VOLUME24HOUR:    acB.FormatMoneyFloat64(item.VOLUME24HOUR),
-			VOLUME24HOURTO:  acDollar.FormatMoneyFloat64(item.VOLUME24HOURTO),
-			LOW24HOUR:       acDollar.FormatMoneyFloat64(item.LOW24HOUR),
-			HIGH24HOUR:      acDollar.FormatMoneyFloat64(item.HIGH24HOUR),
-			PRICE:           acDollar.FormatMoneyFloat64(item.PRICE),
-			SUPPLY:          acB.FormatMoney(item.SUPPLY),
-			MKTCAP:          acDollar.FormatMoneyFloat64(item.MKTCAP),
+			CHANGE24HOUR:    moneyDollarFormat(item.CHANGE24HOUR),
+			CHANGEPCT24HOUR: moneyFormat(item.CHANGEPCT24HOUR, "", 2),
+			OPEN24HOUR:      moneyDollarFormat(item.OPEN24HOUR),
+			VOLUME24HOUR:    moneyBitcoinFormat(item.VOLUME24HOUR),
+			VOLUME24HOURTO:  moneyDollarFormat(item.VOLUME24HOURTO),
+			LOW24HOUR:       moneyDollarFormat(item.LOW24HOUR),
+			HIGH24HOUR:      moneyDollarFormat(item.HIGH24HOUR),
+			PRICE:           moneyDollarFormat(item.PRICE),
+			SUPPLY:          moneyBitcoinFormat(item.SUPPLY),
+			MKTCAP:          moneyDollarFormat(item.MKTCAP),
 		}
 
 		response.Display[item.FromSymbol] = dm
